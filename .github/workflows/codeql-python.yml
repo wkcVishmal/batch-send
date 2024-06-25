@@ -16,6 +16,8 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+    paths:
+      - '**/*.py'
   schedule:
     - cron: '22 5 * * 5'
 
