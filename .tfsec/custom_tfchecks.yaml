@@ -1,0 +1,125 @@
+---
+checks:
+  - code: CUS001
+    description: Ensure using standard s3 module
+    impact: By not using standard module we may not be able to enforce security best practices
+    resolution: Use the standard s3 module for s3 bucket creation
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_s3_bucket
+    severity: CRITICAL
+    matchSpec:
+      name: name
+      action: isPresent
+      subMatch: null
+    errorMessage: Direct usage of aws_s3_bucket resource is not allowed. Use the terraform module instead.
+
+  - code: CUS002
+    description: Ensure using standard KMS module
+    impact: By not using standard module we may not be able to enforce security best practices
+    resolution: Use the standard KMS module for KMS key creation
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_kms_key
+    severity: CRITICAL
+    matchSpec:
+      name: name
+      action: isPresent
+      subMatch: null
+    errorMessage: Direct usage of aws_kms_key resource is not allowed. Use the terraform module instead.
+
+  - code: CUS003
+    description: Ensure using standard ECR repo module
+    impact: By not using standard module we may not be able to enforce security best practices
+    resolution: Use the standard ECR repo module for ECR repository creation
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_ecr_repository
+    severity: CRITICAL
+    matchSpec:
+      name: name
+      action: isPresent
+      subMatch: null
+    errorMessage: Direct usage of aws_ecr_repository resource is not allowed. Use the terraform module instead.
+
+  - code: CUS005
+    description: Ensure SecureString the SSM parameters are encrypted using the Customer managed KMS key
+    impact: Not encrypting SecureString SSM parameters would be a security risk
+    resolution: Use the Customer managed KMS key to encrypt the SSM parameter
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_ssm_parameter
+    severity: CRITICAL
+    matchSpec:
+      name: key_id
+      action: equals
+      value: module.ssm_kms_key.key_id
+      preConditions:
+        - name: type
+          action: equals
+          value: SecureString
+    errorMessage: SecureString SSM parameters should be encrypted with the Customer managed KMS key.
+
+  - code: CUS006
+    description: Ensure RDS instances are encrypted using the Customer managed KMS key
+    impact: Not encrypted RDS instance would be a security risk
+    resolution: Use the Customer managed KMS key to encrypt RDS instance
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_db_instance
+    severity: CRITICAL
+    matchSpec:
+      name: kms_key_id
+      action: equals
+      value: module.rds_kms_key.key_arn
+    errorMessage: RDS should be encrypted with the Customer managed KMS key.
+
+  - code: CUS007
+    description: Ensure RDS instances are not publicly accessible
+    impact: By making publicly_accessible parameter true could expose the RDS instance to public
+    resolution: Make the publicly_accessible parameter false in RDS instance
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_db_instance
+    severity: CRITICAL
+    matchSpec:
+      name: publicly_accessible
+      action: equals
+      value: false
+    errorMessage: publicly_accessible parameter should be false in the RDS instance.
+
+  - code: CUS008
+    description: Ensure IAM user creation is not allowed
+    impact: Using IAM users would be a security risk
+    resolution: Use IAM roles to manage permissions for the services
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_iam_user
+    severity: CRITICAL
+    matchSpec:
+      name: name
+      action: isPresent
+      subMatch: null
+    errorMessage: Creation of IAM users is not allowed.
+
+  - code: CUS009
+    description: Utilize terraform modules for AWS resource creation
+    impact: By not using standard module we may not be able to enforce security best practices
+    resolution: Use a standard terraform module for AWS resource creation
+    requiredTypes:
+      - resource
+    requiredLabels:
+      - aws_*
+    severity: Low
+    matchSpec:
+      name: name
+      action: isPresent
+      subMatch: null
+    errorMessage: Utilizing AWS Terraform resources directly is not recommended. Please use a terraform module if possible.
