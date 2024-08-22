@@ -11,9 +11,9 @@ resource "aws_route53_record" "test" {
   }
 }
 
-# test
-resource "aws_route53_record" "test" {
-  zone_id = "test"
+# test2
+resource "aws_route53_record" "test2" {
+  zone_id = "test2"
   name    = "test101.abc.com"
   type    = "A"
 
@@ -23,3 +23,4 @@ resource "aws_route53_record" "test" {
     evaluate_target_health = false
   }
 }
+
