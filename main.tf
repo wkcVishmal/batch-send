@@ -23,3 +23,15 @@ resource "aws_route53_record" "test2" {
     evaluate_target_health = false
   }
 }
+
+resource "aws_s3_bucket" "bucket" {
+  bucket = "test"
+  tags = var.tags
+}
+
+resource "aws_ssm_parameter" "test_ssm" {
+  name        = "test/test1"
+  description = "test"
+  type        = "SecureString"
+  value       = "test"
+}
